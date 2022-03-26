@@ -4,7 +4,7 @@ const { schema } = require("../helpers/joiSchema.js");
 const get = async (req, res, next) => {
   try {
     const results = await service.getAllContacts();
-    res.json({
+    res.status(200).json({
       status: "success",
       code: 200,
       data: {
@@ -22,7 +22,7 @@ const getById = async (req, res, next) => {
   try {
     const result = await service.getContactById(id);
     if (result) {
-      res.json({
+      res.status(200).json({
         status: "success",
         code: 200,
         data: {
@@ -61,7 +61,7 @@ const addContact = async (req, res, next) => {
       next(e);
     }
   } else {
-    res.json({
+    res.status(403).json({
       status: "error",
       code: 403,
       message: error.details[0].message,
@@ -74,7 +74,7 @@ const updateContact = async (req, res, next) => {
   const { name, email, phone } = req.body;
   try {
     const result = await service.updateContact({ id, name, email, phone });
-    res.json({
+    res.status(200).json({
       status: "success",
       code: 200,
       data: {
@@ -92,7 +92,7 @@ const updateStatus = async (req, res, next) => {
   try {
     const result = await service.updateContact({ id, favorite });
     if (result) {
-      res.json({
+      res.status(200).json({
         status: "success",
         code: 200,
         data: {
@@ -118,7 +118,7 @@ const removeContactById = async (req, res, next) => {
   try {
     const result = await service.removeContact(id);
     if (result) {
-      res.json({
+      res.status(200).json({
         status: "success",
         code: 200,
         data: {
