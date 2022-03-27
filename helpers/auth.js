@@ -1,13 +1,13 @@
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user) => {
     if (!user || err) {
       return res.status(401).json({
-        status: "error",
+        status: "Unauthorized",
         code: 401,
-        message: "Unauthorized",
-        data: "Unauthorized",
+        message: "Not authorized",
       });
     }
     req.user = user;
@@ -15,4 +15,4 @@ const auth = (req, res, next) => {
   })(req, res, next);
 };
 
-module.exports = auth;
+module.exports = { auth };

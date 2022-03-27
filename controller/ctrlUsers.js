@@ -25,24 +25,26 @@ const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await service.getUser(email);
   const { error } = userSchema.validate({ email, password });
+
   if (error === undefined) {
     if (!user || !user.validPassword(password)) {
       return res.status(401).json({
         status: "Unauthorized",
         code: 401,
         message: "Incorrect login or password",
-        data: "Bad request",
       });
     }
 
     const payload = {
       id: user.id,
-      username: user.username,
+      email: user.email,
     };
 
-    const token = jwt.sign(payload, secret, { expiresIn: "1h" });
-    res.json({
-      status: "success",
+    const token = jwt.sign(payload, secret, { expiresIn: "2h" });
+    await User.findByIdAndUpdate(user.id, { token });
+    console.log(user);
+    res.status(200).json({
+      status: "OK",
       code: 200,
       data: {
         token,
@@ -79,7 +81,7 @@ const registerUser = async (req, res, next) => {
       newUser.setPassword(password);
       await newUser.save();
       res.status(201).json({
-        status: "success",
+        status: "Created",
         code: 201,
         data: {
           user: {
