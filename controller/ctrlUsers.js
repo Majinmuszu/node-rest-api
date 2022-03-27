@@ -5,6 +5,21 @@ require("dotenv").config();
 const secret = process.env.SECRET;
 const User = require("../service/schemas/user.js");
 
+const logoutUser = async (req, res, next) => {
+  const { email } = req.body;
+  const user = await service.getUser(email);
+  try {
+    await User.findByIdAndUpdate(user.id, { token: null });
+    return res.status(204).json({
+      status: "No Content",
+      code: 204,
+    });
+  } catch {
+    console.error(e);
+    next(e);
+  }
+};
+
 const getAllUsers = async (req, res, next) => {
   try {
     const results = await service.getAllUsers();
@@ -42,7 +57,6 @@ const loginUser = async (req, res, next) => {
 
     const token = jwt.sign(payload, secret, { expiresIn: "2h" });
     await User.findByIdAndUpdate(user.id, { token });
-    console.log(user);
     res.status(200).json({
       status: "OK",
       code: 200,
@@ -102,4 +116,4 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, getAllUsers, loginUser };
+module.exports = { registerUser, getAllUsers, loginUser, logoutUser };

@@ -14,5 +14,6 @@ router.patch("/contacts/:id/favorite", auth, ctrlContacts.updateStatus);
 router.post("/users/signup", ctrlUsers.registerUser);
 router.get("/users", ctrlUsers.getAllUsers);
 router.post("/users/login", ctrlUsers.loginUser);
+router.get("/users/logout", auth, ctrlUsers.logoutUser)
 
 module.exports = router;
