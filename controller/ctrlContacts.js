@@ -1,19 +1,39 @@
 const service = require("../service");
 const { schema } = require("../helpers/joiSchema.js");
 
+
 const getAll = async (req, res, next) => {
-  try {
-    const results = await service.getAllContacts();
-    res.status(200).json({
-      status: "success",
-      code: 200,
-      data: {
-        contacts: results,
-      },
-    });
-  } catch (e) {
-    console.error(e);
-    next(e);
+  const fav = req.query.favorite;
+  if (fav) {
+    try {
+      const results = await service.getFavContacts(fav);
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "OK",
+        data: {
+          contacts: results,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  } else {
+    try {
+      const results = await service.getAllContacts();
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "OK",
+        data: {
+          contacts: results,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
   }
 };
 
@@ -25,6 +45,7 @@ const getById = async (req, res, next) => {
       res.status(200).json({
         status: "success",
         code: 200,
+        message: "OK",
         data: {
           contacts: result,
         },
@@ -52,6 +73,7 @@ const addContact = async (req, res, next) => {
       res.status(201).json({
         status: "success",
         code: 201,
+        message: "Created",
         data: {
           contacts: result,
         },
@@ -61,10 +83,11 @@ const addContact = async (req, res, next) => {
       next(e);
     }
   } else {
-    res.status(403).json({
+    res.status(400).json({
       status: "error",
       code: 403,
       message: error.details[0].message,
+      data: "Bad Request",
     });
   }
 };
@@ -77,6 +100,7 @@ const updateContact = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       code: 200,
+      message: "OK",
       data: {
         contacts: result,
       },
@@ -95,6 +119,7 @@ const updateStatus = async (req, res, next) => {
       res.status(200).json({
         status: "success",
         code: 200,
+        message: "OK",
         data: {
           contacts: result,
         },
@@ -121,6 +146,7 @@ const removeContactById = async (req, res, next) => {
       res.status(200).json({
         status: "success",
         code: 200,
+        message: "OK",
         data: {
           contacts: result,
         },
@@ -146,4 +172,5 @@ module.exports = {
   removeContactById,
   updateContact,
   updateStatus,
+  // getFavoriteContacts,
 };

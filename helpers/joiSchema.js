@@ -8,5 +8,6 @@ const schema = Joi.object({
 const userSchema = Joi.object({
   email: Joi.string().email(),
   password: Joi.string(),
+  subscription: Joi.any().valid("starter", "pro", "business"),
 });
 module.exports = { schema, userSchema };
