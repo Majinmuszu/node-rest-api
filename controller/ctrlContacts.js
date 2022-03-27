@@ -1,7 +1,7 @@
 const service = require("../service");
 const { schema } = require("../helpers/joiSchema.js");
 
-const get = async (req, res, next) => {
+const getAll = async (req, res, next) => {
   try {
     const results = await service.getAllContacts();
     res.status(200).json({
@@ -140,7 +140,7 @@ const removeContactById = async (req, res, next) => {
 };
 
 module.exports = {
-  get,
+  getAll,
   getById,
   addContact,
   removeContactById,
