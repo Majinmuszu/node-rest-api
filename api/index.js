@@ -15,5 +15,6 @@ router.post("/users/signup", ctrlUsers.registerUser);
 router.get("/users", ctrlUsers.getAllUsers);
 router.post("/users/login", ctrlUsers.loginUser);
 router.get("/users/logout", auth, ctrlUsers.logoutUser)
+router.get("/users/current", auth, ctrlUsers.currentUser)
 
 module.exports = router;
