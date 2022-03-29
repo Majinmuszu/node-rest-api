@@ -3,14 +3,14 @@ const User = require("./schemas/user");
 
 /// Contacts
 
-const getAllContacts = () => Contact.find();
+const getAllContacts = (owner) => Contact.find({owner});
 const getContactById = (id) => Contact.findById(id);
-const createContact = ({ name, email, phone }) =>
-  Contact.create({ name, email, phone });
+const createContact = ({ name, email, phone, _id }) =>
+  Contact.create({ name, email, phone, owner: _id });
 const removeContact = (id) => Contact.findByIdAndRemove(id);
 const updateContact = ({ id, name, email, phone, favorite }) =>
   Contact.findByIdAndUpdate(id, { name, email, phone, favorite });
-const getFavContacts = (favorite) => Contact.find({ favorite });
+const getFavContacts = (favorite, owner) => Contact.find({ favorite, owner });
 
 ///Users
 

@@ -6,7 +6,7 @@ const secret = process.env.SECRET;
 const User = require("../service/schemas/user.js");
 
 const currentUser = async (req, res, next) => {
-  const { email } = req.body;
+  const { email } = req.user;
   try {
     const user = await service.getUser(email);
     res.status(200).json({
@@ -89,7 +89,7 @@ const updateUserSub = async (req, res, next) => {
       status: "error",
       code: 403,
       message: error.details[0].message,
-      data: "Bad Request"
+      data: "Bad Request",
     });
   }
 };
@@ -105,7 +105,7 @@ const loginUser = async (req, res, next) => {
         status: "error",
         code: 401,
         message: "Incorrect login or password",
-        data: "Unauthorized"
+        data: "Unauthorized",
       });
     }
 
@@ -133,7 +133,7 @@ const loginUser = async (req, res, next) => {
       status: "error",
       code: 400,
       message: error.details[0].message,
-      data: "Bad Request"
+      data: "Bad Request",
     });
   }
 };
@@ -148,7 +148,7 @@ const registerUser = async (req, res, next) => {
         status: "error",
         code: 409,
         message: "Email is already in use",
-        data: "Conflict"
+        data: "Conflict",
       });
     }
     try {
@@ -167,7 +167,7 @@ const registerUser = async (req, res, next) => {
         },
       });
     } catch (e) {
-      console.error(e)
+      console.error(e);
       next(e);
     }
   } else {
@@ -175,7 +175,7 @@ const registerUser = async (req, res, next) => {
       status: "error",
       code: 400,
       message: error.details[0].message,
-      data: "Bad Request"
+      data: "Bad Request",
     });
   }
 };

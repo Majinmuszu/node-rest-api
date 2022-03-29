@@ -1,12 +1,12 @@
 const service = require("../service");
 const { schema } = require("../helpers/joiSchema.js");
 
-
 const getAll = async (req, res, next) => {
+  const { _id } = req.user;
   const fav = req.query.favorite;
   if (fav) {
     try {
-      const results = await service.getFavContacts(fav);
+      const results = await service.getFavContacts(fav, _id);
       res.status(200).json({
         status: "success",
         code: 200,
@@ -21,7 +21,7 @@ const getAll = async (req, res, next) => {
     }
   } else {
     try {
-      const results = await service.getAllContacts();
+      const results = await service.getAllContacts(_id);
       res.status(200).json({
         status: "success",
         code: 200,
@@ -66,10 +66,11 @@ const getById = async (req, res, next) => {
 
 const addContact = async (req, res, next) => {
   const { name, email, phone } = req.body;
+  const { _id } = req.user;
   const { error } = schema.validate({ name, email, phone });
   if (error === undefined) {
     try {
-      const result = await service.createContact({ name, email, phone });
+      const result = await service.createContact({ name, email, phone, _id });
       res.status(201).json({
         status: "success",
         code: 201,
