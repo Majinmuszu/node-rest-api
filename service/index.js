@@ -19,16 +19,18 @@ const getUser = (email) => User.findOne({ email });
 const getUserById = (_id) => User.findOne({ _id });
 const updateUserSubscription = (_id, subscription) =>
   User.findOneAndUpdate({ _id }, { subscription });
+const updateUserJWT = (_id, token) => User.findByIdAndUpdate(_id, { token });
 
 module.exports = {
-  getAllContacts,
-  getContactById,
   createContact,
   removeContact,
   updateContact,
+  getAllContacts,
+  getContactById,
+  getFavContacts,
   getUser,
   getAllUsers,
   updateUserSubscription,
-  getFavContacts,
   getUserById,
+  updateUserJWT,
 };
