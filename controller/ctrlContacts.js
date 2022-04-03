@@ -86,7 +86,7 @@ const addContact = async (req, res, next) => {
   } else {
     res.status(400).json({
       status: "error",
-      code: 403,
+      code: 400,
       message: error.details[0].message,
       data: "Bad Request",
     });

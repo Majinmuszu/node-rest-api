@@ -6,9 +6,9 @@ const secret = process.env.SECRET;
 const User = require("../service/schemas/user.js");
 
 const currentUser = async (req, res, next) => {
-  const { email } = req.user;
+  const { _id } = req.user;
   try {
-    const user = await service.getUser(email);
+    const user = await service.getUserById(_id);
     res.status(200).json({
       status: "success",
       code: 200,
@@ -25,10 +25,9 @@ const currentUser = async (req, res, next) => {
 };
 
 const logoutUser = async (req, res, next) => {
-  const { email } = req.body;
+  const { _id } = req.user;
   try {
-    const user = await service.getUser(email);
-    await User.findByIdAndUpdate(user.id, { token: null });
+    await User.findByIdAndUpdate(_id, { token: null });
     return res.status(204).json({
       status: "No Content",
       code: 204,
@@ -57,11 +56,12 @@ const getAllUsers = async (req, res, next) => {
 };
 
 const updateUserSub = async (req, res, next) => {
-  const { subscription, email } = req.body;
-  const { error } = userSchema.validate({ subscription, email });
-  if (error === undefined) {
+  const { subscription } = req.body;
+  const { _id } = req.user;
+  const { error } = userSchema.validate({ subscription });
+  if (!error) {
     try {
-      const result = await service.updateUserSubscription(email, subscription);
+      const result = await service.updateUserSubscription(_id, subscription);
       if (result) {
         res.status(200).json({
           status: "success",
@@ -99,7 +99,7 @@ const loginUser = async (req, res, next) => {
   const user = await service.getUser(email);
   const { error } = userSchema.validate({ email, password });
 
-  if (error === undefined) {
+  if (!error) {
     if (!user || !user.validPassword(password)) {
       return res.status(401).json({
         status: "error",
@@ -141,7 +141,7 @@ const loginUser = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
   const { email, password } = req.body;
   const { error } = userSchema.validate({ email, password });
-  if (error === undefined) {
+  if (!error) {
     const user = await service.getUser(email);
     if (user) {
       return res.status(409).json({

@@ -3,7 +3,7 @@ const User = require("./schemas/user");
 
 /// Contacts
 
-const getAllContacts = (owner) => Contact.find({owner});
+const getAllContacts = (owner) => Contact.find({ owner });
 const getContactById = (id) => Contact.findById(id);
 const createContact = ({ name, email, phone, _id }) =>
   Contact.create({ name, email, phone, owner: _id });
@@ -16,8 +16,9 @@ const getFavContacts = (favorite, owner) => Contact.find({ favorite, owner });
 
 const getAllUsers = () => User.find();
 const getUser = (email) => User.findOne({ email });
-const updateUserSubscription = (email, subscription) =>
-  User.findOneAndUpdate({ email }, { subscription });
+const getUserById = (_id) => User.findOne({ _id });
+const updateUserSubscription = (_id, subscription) =>
+  User.findOneAndUpdate({ _id }, { subscription });
 
 module.exports = {
   getAllContacts,
@@ -29,4 +30,5 @@ module.exports = {
   getAllUsers,
   updateUserSubscription,
   getFavContacts,
+  getUserById,
 };
