@@ -20,6 +20,8 @@ const getUserById = (_id) => User.findOne({ _id });
 const updateUserSubscription = (_id, subscription) =>
   User.findOneAndUpdate({ _id }, { subscription });
 const updateUserJWT = (_id, token) => User.findByIdAndUpdate(_id, { token });
+const updateUserAvatar = (_id, avatarURL) =>
+  User.findByIdAndUpdate(_id, { avatarURL });
 
 module.exports = {
   createContact,
@@ -33,4 +35,5 @@ module.exports = {
   updateUserSubscription,
   getUserById,
   updateUserJWT,
+  updateUserAvatar,
 };
