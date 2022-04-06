@@ -186,7 +186,7 @@ const registerUser = async (req, res, next) => {
 
 const updateAvatar = async (req, res, next) => {
   const { _id } = req.user;
-  const avatarURL = `/avatars/av_${_id}.png`;
+  const avatarURL = `./avatars/av_${_id}.png`;
   Jimp.read(`tmp/${req.file.filename}`)
     .then((avatar) => {
       return avatar
