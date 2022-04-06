@@ -8,7 +8,12 @@ const msg = (email, verificationToken) => {
     from: "artur.krasniewski1@gmail.com", // Change to your verified sender
     subject: "ContactBook by Artur User Verification",
     text: `To verify Your account at ContactBook by Artur just click link below http://localhost:3000/api/users/verify/${verificationToken}`,
-    html: `<strong>To verify Your account at ContactBook by Artur just click link below <br/> <a href="http://localhost:3000/api/users/verify/${verificationToken}">VERIFICATION LINK<a/></strong>`,
+    html: `<body style="font-family: sans-serif; text-align: center;">
+              <h1 style="color: rgb(126, 164, 245); margin-top: 80px;">&#128214; ContactBook by Artur &#128214;</h1>
+              <p style="font-size: 20px; margin-top: 50px;">To verify Your user account at <em style="color: rgb(126, 164, 245);">ContactBook by Artur</em> just click button below</p>
+              <a href="http://localhost:3000/api/users/verify/${verificationToken}"><button style="width: 380px; height: 80px; font-size: 20px; border-radius: 30px; background-color: rgb(199, 238, 238); margin-top: 50px; ">VERIFY EMAIL &#9989;</button><a/>
+              <p style="font-size: 10px;margin-top: 50px; color: rgb(126, 164, 245);">Or just copy this link to Your browser: http://localhost:3000/api/users/verify/${verificationToken}</p>
+        </body>`,
   };
 };
 
