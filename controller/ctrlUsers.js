@@ -113,6 +113,13 @@ const loginUser = async (req, res, next) => {
         message: "Incorrect login or password",
         data: "Unauthorized",
       });
+    } else if (!user.isVerified) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "Please verify Your account first",
+        data: "Unauthorized",
+      });
     }
 
     const payload = {
@@ -148,7 +155,7 @@ const registerUser = async (req, res, next) => {
   const { email, password } = req.body;
   const { error } = userSchema.validate({ email, password });
   const avatarURL = gravatar.url(email);
-  const verToken = nanoid();
+  const verificationToken = nanoid();
   if (!error) {
     const user = await service.getUser(email);
     if (user) {
@@ -160,10 +167,10 @@ const registerUser = async (req, res, next) => {
       });
     }
     try {
-      const newUser = new User({ email, avatarURL });
+      const newUser = new User({ email, avatarURL, verificationToken });
       newUser.setPassword(password);
       await newUser.save();
-      
+      sendMail(email, verificationToken);
       res.status(201).json({
         status: "success",
         code: 201,
@@ -239,9 +246,7 @@ const verifyUser = async (req, res, next) => {
         status: "success",
         code: 200,
         message: "Verification succesful",
-        data: {
-          avatarURL,
-        },
+        data: "OK"
       });
     } else {
       res.status(404).json({
