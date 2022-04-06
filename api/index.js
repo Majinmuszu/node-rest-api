@@ -36,6 +36,7 @@ router
     upload.single("avatar"),
     ctrlUsers.updateAvatar
   )
-  .get("/users/verify/:verificationToken", ctrlUsers.verifyUser);
+  .get("/users/verify/:verificationToken", ctrlUsers.verifyUser)
+  .post("/users/verify", ctrlUsers.resendVerificationMail)
 
 module.exports = router;

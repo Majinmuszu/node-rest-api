@@ -238,7 +238,6 @@ const updateAvatar = async (req, res, next) => {
 
 const verifyUser = async (req, res, next) => {
   const { verificationToken } = req.params;
-  console.log(verificationToken);
   try {
     const result = await service.updateVerificationToken(verificationToken);
     if (result) {
@@ -246,7 +245,7 @@ const verifyUser = async (req, res, next) => {
         status: "success",
         code: 200,
         message: "Verification succesful",
-        data: "OK"
+        data: "OK",
       });
     } else {
       res.status(404).json({
@@ -261,6 +260,50 @@ const verifyUser = async (req, res, next) => {
     next(e);
   }
 };
+
+const resendVerificationMail = async (req, res, next) => {
+  const { email } = req.body;
+  const { error } = userSchema.validate({ email });
+  if (!error) {
+    try {
+      const user = await service.getUser(email);
+      if (!user) {
+        res.status(404).json({
+          status: "error",
+          code: 404,
+          message: `User not found`,
+          data: "Not Found",
+        });
+      } else if (!user.isVerified) {
+        sendMail(email, user.verificationToken);
+        res.status(200).json({
+          status: "success",
+          code: 200,
+          message: "Verification email sent",
+          data: "OK",
+        });
+      } else {
+        res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "Verification has already been passed",
+          data: "Bad request",
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  } else {
+    res.status(400).json({
+      status: "error",
+      code: 400,
+      message: error.details[0].message,
+      data: "Bad Request",
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   getAllUsers,
@@ -270,4 +313,5 @@ module.exports = {
   updateUserSub,
   updateAvatar,
   verifyUser,
+  resendVerificationMail,
 };
