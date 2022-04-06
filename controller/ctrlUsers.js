@@ -4,9 +4,11 @@ const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const fs = require("fs");
+const { nanoid } = require("nanoid");
 require("dotenv").config();
 const secret = process.env.SECRET;
 const User = require("../service/schemas/user.js");
+const { sendMail } = require("../helpers/sendgrid");
 
 const currentUser = async (req, res, next) => {
   const { _id } = req.user;
@@ -42,6 +44,7 @@ const logoutUser = async (req, res, next) => {
 };
 
 const getAllUsers = async (req, res, next) => {
+  sendMail();
   try {
     const results = await service.getAllUsers();
     res.status(200).json({
@@ -145,6 +148,7 @@ const registerUser = async (req, res, next) => {
   const { email, password } = req.body;
   const { error } = userSchema.validate({ email, password });
   const avatarURL = gravatar.url(email);
+  const verToken = nanoid();
   if (!error) {
     const user = await service.getUser(email);
     if (user) {
@@ -159,6 +163,7 @@ const registerUser = async (req, res, next) => {
       const newUser = new User({ email, avatarURL });
       newUser.setPassword(password);
       await newUser.save();
+      
       res.status(201).json({
         status: "success",
         code: 201,
@@ -224,6 +229,33 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
+const verifyUser = async (req, res, next) => {
+  const { verificationToken } = req.params;
+  console.log(verificationToken);
+  try {
+    const result = await service.updateVerificationToken(verificationToken);
+    if (result) {
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "Verification succesful",
+        data: {
+          avatarURL,
+        },
+      });
+    } else {
+      res.status(404).json({
+        status: "error",
+        code: 404,
+        message: `User not found`,
+        data: "Not Found",
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
 module.exports = {
   registerUser,
   getAllUsers,
@@ -232,4 +264,5 @@ module.exports = {
   currentUser,
   updateUserSub,
   updateAvatar,
+  verifyUser,
 };
