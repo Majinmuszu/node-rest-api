@@ -1,6 +1,9 @@
 const service = require("../service");
 const { userSchema } = require("../helpers/joiSchema.js");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+const Jimp = require("jimp");
+const fs = require("fs");
 require("dotenv").config();
 const secret = process.env.SECRET;
 const User = require("../service/schemas/user.js");
@@ -14,7 +17,7 @@ const currentUser = async (req, res, next) => {
       code: 200,
       message: "OK",
       data: {
-        email,
+        email: user.email,
         subscription: user.subscription,
       },
     });
@@ -141,6 +144,7 @@ const loginUser = async (req, res, next) => {
 const registerUser = async (req, res, next) => {
   const { email, password } = req.body;
   const { error } = userSchema.validate({ email, password });
+  const avatarURL = gravatar.url(email);
   if (!error) {
     const user = await service.getUser(email);
     if (user) {
@@ -152,7 +156,7 @@ const registerUser = async (req, res, next) => {
       });
     }
     try {
-      const newUser = new User({ email });
+      const newUser = new User({ email, avatarURL });
       newUser.setPassword(password);
       await newUser.save();
       res.status(201).json({
@@ -161,7 +165,7 @@ const registerUser = async (req, res, next) => {
         message: "Created",
         data: {
           user: {
-            email: email,
+            email,
             subscription: "starter",
           },
         },
@@ -180,6 +184,46 @@ const registerUser = async (req, res, next) => {
   }
 };
 
+const updateAvatar = async (req, res, next) => {
+  const { _id } = req.user;
+  const avatarURL = `./avatars/av_${_id}.png`;
+  Jimp.read(`tmp/${req.file.filename}`)
+    .then((avatar) => {
+      return avatar
+        .resize(250, 250) // resize
+        .write(`public/avatars/av_${_id}.png`); // save
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  try {
+    const result = await service.updateUserAvatar(_id, avatarURL);
+    if (result) {
+      fs.unlink(req.file.path, (err) => {
+        console.error(err);
+      });
+      res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "OK",
+        data: {
+          avatarURL,
+        },
+      });
+    } else {
+      res.status(404).json({
+        status: "error",
+        code: 404,
+        message: `user not found`,
+        data: "Not Found",
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
 module.exports = {
   registerUser,
   getAllUsers,
@@ -187,4 +231,5 @@ module.exports = {
   logoutUser,
   currentUser,
   updateUserSub,
+  updateAvatar,
 };
