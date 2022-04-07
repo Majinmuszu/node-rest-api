@@ -44,7 +44,6 @@ const logoutUser = async (req, res, next) => {
 };
 
 const getAllUsers = async (req, res, next) => {
-  sendMail();
   try {
     const results = await service.getAllUsers();
     res.status(200).json({
