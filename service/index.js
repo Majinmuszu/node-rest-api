@@ -1,3 +1,4 @@
+const { findOneAndUpdate } = require("./schemas/contact");
 const Contact = require("./schemas/contact");
 const User = require("./schemas/user");
 
@@ -22,6 +23,11 @@ const updateUserSubscription = (_id, subscription) =>
 const updateUserJWT = (_id, token) => User.findByIdAndUpdate(_id, { token });
 const updateUserAvatar = (_id, avatarURL) =>
   User.findByIdAndUpdate(_id, { avatarURL });
+const updateVerificationToken = (verificationToken) =>
+  User.findOneAndUpdate(
+    { verificationToken },
+    { isVerified: true, verificationToken: null }
+  );
 
 module.exports = {
   createContact,
@@ -36,4 +42,5 @@ module.exports = {
   getUserById,
   updateUserJWT,
   updateUserAvatar,
+  updateVerificationToken,
 };
